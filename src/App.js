@@ -1,16 +1,17 @@
 import MovieList from "./components/MovieList";
 import "./App.css";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function fetchMoviesHandler() {
+  const fetchMoviesHandler = useCallback( async function () {
     setIsLoading(true);
-    setError(null);
-
+    setError(null)
+  
+  
     try {
       const response = await fetch("https://swapi.dev/api/films/");
       if (!response.ok) {
@@ -28,11 +29,17 @@ function App() {
       });
       setMovies(transformedMovies);
       setIsLoading(false);
+    
     } catch (error) {
       setError(error.message);
     }
     setIsLoading(false);
-  }
+  },[] );
+
+  useEffect(()=>{
+    fetchMoviesHandler();
+  }, [fetchMoviesHandler]);
+  
   let content = <p>Found no movie</p>;
 
   if (movies.length > 0) {
@@ -44,6 +51,7 @@ function App() {
   if (isLoading) {
     content = <p>Loading...</p>;
   }
+  
   return (
     <React.Fragment>
       <section>
